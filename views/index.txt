@@ -1,0 +1,2 @@
+library/views is where the html/css/php views (frontend code)
+for the applications that you make go.

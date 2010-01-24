@@ -1,0 +1,35 @@
+Here is an example of how to use the ORM and MVC
+together to produce a database driven web page:
+
+/---------------------------------------------------------------------------------/
+
+class Blog extends Controller
+{
+	function applyInputToModel()
+	{
+		Load('blog'); //loads blog.model.php from /models
+		$posts = blog_model::getAll(); //run getAll() method to collect all records
+		
+		$mto = new MTO('blog'); //instantiates mto of blog.view.php from /views
+		$mto->setModelValues('posts', $posts);
+		return $mto;
+	}
+}
+
+Blog::sendResponse(new Blog());
+
+/---------------------------------------------------------------------------------/
+
+This sample demonstrates how to call models in and use them.
+
+First, as in every other controller, we are extending the parent controller.
+
+Next, we're loading the blog model.
+
+Then, we're running a method of the blog_model class to collect all records.
+
+After that, we're instantiating the mto.
+
+Now we're assigning the objects returned to the $model array.
+
+Finally, we're instantiating the Blog object and displaying it.

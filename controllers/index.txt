@@ -1,0 +1,2 @@
+library/controllers is where the controllers
+that you make for your applications go.

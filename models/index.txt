@@ -1,0 +1,2 @@
+library/models is where the database oriented models
+that you make for your applications go.

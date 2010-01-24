@@ -1,0 +1,113 @@
+When working with databases, NullPHP implements
+Object Relational Mapping (ORM) to make your
+life easier.
+
+To use this ORM with your websites, you have to
+understand how it is being used. Every table that
+is intended to be used in the website has a class
+associated with it, which is an extension of the
+parent DB class. As of now there is only support
+for MySQL databases, but more are planned.
+
+Here is an example of what this child class should
+look like.
+
+/---------------------------------------------------------------------------------/
+
+class blog_model extends DB
+{
+	// must have class members
+	public static $_table = 'posts'; //this coorelates to the table name
+	public static $_fields = array();
+	public static $_primaryKey = array();
+	private static $_loadFields = false;
+	
+	//table descriptors, fieldnames
+	//for every column, there must be an entry here of the same name
+	protected $id;
+	protected $title;
+	protected $content;
+	protected $active;
+	
+	public function __construct()
+	{
+		parent::__construct(); 
+		
+		if(self::$_loadFields == false)
+		{	
+			self::$_fields = self::getFields();
+			self::$_primaryKey = self::getPrimaryKey();
+			self::$_loadFields = true;
+		}
+		
+		foreach($this as $key => $value)
+			$this->$key = NULL; 
+	}
+	
+	public function __destruct()
+	{	
+		foreach($this as $key => $value)
+			unset($this->$key);
+	}
+	
+	public function __get($attribute)
+	{
+		if(!property_exists(get_class($this), $attribute))
+			throw new Exception('Trying to get an invalid page member');
+		
+		return $this->$attribute;
+	}
+	
+	public function __set($attribute, $value)
+	{
+		if(!property_exists(get_class($this), $attribute))
+			throw new Exception('Trying to set an invalid page member');
+		
+		$this->$attribute = $value;
+	}
+	
+	public function insert()
+	{
+		$this->PageID = $this->insert_bdd();
+	}
+	
+	public function update()
+	{
+		$this->update_bdd();
+	}
+	
+	public function delete()
+	{
+		$this->delete_bdd();
+	}
+	
+	public static function initByPrimaryKey($Pk)
+	{
+		$c = __CLASS__;
+		$p = new $c;
+		$p->init_by_primaryKey($Pk);
+		return $p;
+	}
+
+	public static function deleteDirectly($Pk)
+	{
+		parent::deleteDirectly(self::$_table, self::$_primaryKey, $Pk);
+	}
+	
+	public static function getAll()
+	{
+		return parent::getAll(__CLASS__, self::$_table);
+	}
+	
+	public static function getCount()
+	{
+		return parent::getCount(self::$_table);
+	}
+	
+	public static function getWhere($where)
+	{
+		return parent::getWhere(__CLASS__, self::$_table, $where);
+	}
+}
+
+/---------------------------------------------------------------------------------/
